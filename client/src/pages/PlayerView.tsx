@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useGame } from '../hooks/useGame';
 import { ConnectionStatus } from '../components/ConnectionStatus';
 import type { Team } from '../types';
-import { Users, AlertTriangle, Trophy, ChevronLeft } from 'lucide-react';
+import { Users, AlertTriangle, Trophy } from 'lucide-react';
 
 // ── Team selector ─────────────────────────────────────────────────────────────
 interface TeamSelectorProps {
@@ -66,7 +66,21 @@ import { sound } from '../utils/sound';
 // ── Main PlayerView ────────────────────────────────────────────────────────────
 export function PlayerView() {
   const { gameId } = useParams<{ gameId: string }>();
-  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+  
+  // Persist selected team in localStorage so players stay locked to their assigned team
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(() => {
+    if (!gameId) return null;
+    const saved = localStorage.getItem(`buzzer_team_${gameId}`);
+    return saved ? { id: saved } as Team : null;
+  });
+
+  const handleSelectTeam = (team: Team) => {
+    setSelectedTeam(team);
+    if (gameId) {
+      localStorage.setItem(`buzzer_team_${gameId}`, team.id);
+    }
+  };
+
   const [pressed, setPressed] = useState(false);
   const [showRipple, setShowRipple] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
@@ -169,7 +183,7 @@ export function PlayerView() {
         <div className="absolute top-3 right-4 z-10">
           <ConnectionStatus status={status} />
         </div>
-        <TeamSelector teams={game.teams} onSelect={setSelectedTeam} gameId={game.id} />
+        <TeamSelector teams={game.teams} onSelect={handleSelectTeam} gameId={game.id} />
       </div>
     );
   }
@@ -178,10 +192,8 @@ export function PlayerView() {
     return (
       <div className="min-h-dvh flex items-center justify-center p-6 text-center space-y-3">
         <AlertTriangle size={28} className="text-yellow-400 mx-auto" />
-        <p className="text-[var(--text-primary)]">Your team was removed by the host.</p>
-        <button onClick={() => setSelectedTeam(null)} className="text-sm text-purple-400 underline">
-          Select another team
-        </button>
+        <p className="text-[var(--text-primary)]">Your team was removed or updated by the host.</p>
+        <p className="text-xs text-[var(--text-muted)]">Ask your host to re-add your team.</p>
       </div>
     );
   }
@@ -217,12 +229,10 @@ export function PlayerView() {
     >
       {/* Top Header Bar */}
       <header className="flex items-center justify-between px-4 pt-3 pb-2 shrink-0">
-        <button
-          onClick={() => setSelectedTeam(null)}
-          className="flex items-center gap-1 text-xs font-semibold text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors py-1 px-2.5 rounded-lg bg-white/5 border border-white/10"
-        >
-          <ChevronLeft size={14} /> Switch Team
-        </button>
+        <div className="flex items-center gap-1.5 text-xs font-mono text-[var(--text-muted)] bg-white/5 border border-white/10 px-2.5 py-1 rounded-lg">
+          <span>GAME</span>
+          <span className="text-purple-400 font-bold">{game.id}</span>
+        </div>
 
         <div className="flex items-center gap-2 bg-white/5 px-3 py-1 rounded-full border border-white/10">
           <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: liveTeam.color, boxShadow: `0 0 8px ${liveTeam.color}` }} />
