@@ -2,37 +2,72 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Zap, Users, Crown, ArrowRight, Hash } from 'lucide-react';
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'https://buzzer-g32c.onrender.com';
+const getBackendUrl = () => {
+  let url = import.meta.env.VITE_SERVER_URL || 'https://buzzer-g32c.onrender.com';
+  url = url.trim().replace(/\/+$/, '');
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:' && url.startsWith('http:')) {
+    url = url.replace('http:', 'https:');
+  }
+  return url;
+};
 
 export function Landing() {
   const navigate = useNavigate();
   const [joinId, setJoinId] = useState('');
   const [creating, setCreating] = useState(false);
+  const [statusMsg, setStatusMsg] = useState('');
   const [joinError, setJoinError] = useState('');
 
   const createGame = async () => {
     setCreating(true);
-    try {
-      const res = await fetch(`${SERVER_URL}/api/games`, { method: 'POST' });
-      if (!res.ok) throw new Error('Failed to create game');
-      const { gameId } = await res.json();
-      navigate(`/host/${gameId}`);
-    } catch {
-      setCreating(false);
-      alert('Could not connect to server. Is it running?');
+    setStatusMsg('Connecting to server…');
+    const baseUrl = getBackendUrl();
+    
+    // Retry up to 3 times (handles Render cold start wakeups)
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        if (attempt > 1) {
+          setStatusMsg(`Waking up server (attempt ${attempt}/3)…`);
+        }
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s timeout per attempt
+
+        const res = await fetch(`${baseUrl}/api/games`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+
+        if (!res.ok) throw new Error(`Server returned status ${res.status}`);
+        const data = await res.json();
+        if (!data.gameId) throw new Error('Invalid response from server');
+
+        navigate(`/host/${data.gameId}`);
+        return;
+      } catch (err: unknown) {
+        if (attempt === 3) {
+          setCreating(false);
+          setStatusMsg('');
+          const msg = err instanceof Error ? err.message : 'Network error';
+          alert(`Connection failed (${baseUrl}): ${msg}\n\nPlease check if server is active.`);
+        } else {
+          await new Promise((r) => setTimeout(r, 2000));
+        }
+      }
     }
   };
 
   const joinGame = async () => {
     const id = joinId.trim().toUpperCase();
     if (!id) { setJoinError('Enter a Game ID'); return; }
-    // Check game exists
+    const baseUrl = getBackendUrl();
     try {
-      const res = await fetch(`${SERVER_URL}/api/games/${id}`);
+      const res = await fetch(`${baseUrl}/api/games/${id}`);
       if (!res.ok) { setJoinError('Game not found'); return; }
       navigate(`/play/${id}`);
     } catch {
-      setJoinError('Could not reach server');
+      setJoinError('Could not reach server. Please try again.');
     }
   };
 
@@ -78,7 +113,7 @@ export function Landing() {
             }}
           >
             {creating ? (
-              <><span className="animate-spin">⚡</span> Creating…</>
+              <><span className="animate-spin">⚡</span> {statusMsg || 'Creating…'}</>
             ) : (
               <><Crown size={18} /> Create New Game <ArrowRight size={16} /></>
             )}
