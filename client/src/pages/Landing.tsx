@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Zap, Users, Crown, ArrowRight, Hash } from 'lucide-react';
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || '';
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'https://buzzer-g32c.onrender.com';
 
 export function Landing() {
   const navigate = useNavigate();

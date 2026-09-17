@@ -3,7 +3,7 @@ import { io, Socket } from 'socket.io-client';
 import type { GameState, BuzzResult } from '../types';
 
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || '';
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'https://buzzer-g32c.onrender.com';
 
 export type ConnectionStatus = 'connecting' | 'connected' | 'disconnected';
 
