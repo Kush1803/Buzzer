@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Zap, Users, Crown, ArrowRight, Hash } from 'lucide-react';
 
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || '';
+
 export function Landing() {
   const navigate = useNavigate();
   const [joinId, setJoinId] = useState('');
@@ -11,7 +13,7 @@ export function Landing() {
   const createGame = async () => {
     setCreating(true);
     try {
-      const res = await fetch('/api/games', { method: 'POST' });
+      const res = await fetch(`${SERVER_URL}/api/games`, { method: 'POST' });
       if (!res.ok) throw new Error('Failed to create game');
       const { gameId } = await res.json();
       navigate(`/host/${gameId}`);
@@ -26,7 +28,7 @@ export function Landing() {
     if (!id) { setJoinError('Enter a Game ID'); return; }
     // Check game exists
     try {
-      const res = await fetch(`/api/games/${id}`);
+      const res = await fetch(`${SERVER_URL}/api/games/${id}`);
       if (!res.ok) { setJoinError('Game not found'); return; }
       navigate(`/play/${id}`);
     } catch {
