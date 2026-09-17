@@ -1,0 +1,99 @@
+{
+  "777D41AC": {
+    "id": "777D41AC",
+    "createdAt": 1789635387090,
+    "teams": [],
+    "currentRound": {
+      "number": 1,
+      "status": "idle",
+      "startedAt": null,
+      "lockAfterFirst": true,
+      "buzzEvents": []
+    },
+    "buzzHistory": [],
+    "hostSocketId": null
+  },
+  "0E0F1E24": {
+    "id": "0E0F1E24",
+    "createdAt": 1789635393153,
+    "teams": [],
+    "currentRound": {
+      "number": 1,
+      "status": "idle",
+      "startedAt": null,
+      "lockAfterFirst": true,
+      "buzzEvents": []
+    },
+    "buzzHistory": [],
+    "hostSocketId": null
+  },
+  "5D588148": {
+    "id": "5D588148",
+    "createdAt": 1789635477660,
+    "teams": [],
+    "currentRound": {
+      "number": 1,
+      "status": "idle",
+      "startedAt": null,
+      "lockAfterFirst": true,
+      "buzzEvents": []
+    },
+    "buzzHistory": [],
+    "hostSocketId": null
+  },
+  "4DC7BC32": {
+    "id": "4DC7BC32",
+    "createdAt": 1789635955710,
+    "teams": [
+      {
+        "id": "71074218-3c3f-4377-81b4-4a8d237de9ae",
+        "name": "Red",
+        "leader": "Kush",
+        "color": "#FF6B6B",
+        "score": 3,
+        "isLocked": true,
+        "lastBuzzTime": 1789636047748
+      },
+      {
+        "id": "6656647b-a43a-48fe-b374-13fe7b6fbcb5",
+        "name": "Black",
+        "leader": "Harsh",
+        "color": "#A3E4D7",
+        "score": 1,
+        "isLocked": false,
+        "lastBuzzTime": 0
+      }
+    ],
+    "currentRound": {
+      "number": 6,
+      "status": "idle",
+      "startedAt": 1789636013065,
+      "lockAfterFirst": true,
+      "buzzEvents": [
+        {
+          "id": "344c6e66-147f-48b8-a929-f94ce0f28a34",
+          "teamId": "71074218-3c3f-4377-81b4-4a8d237de9ae",
+          "teamName": "Red",
+          "teamColor": "#FF6B6B",
+          "timestamp": 1789636047748,
+          "roundNumber": 6,
+          "responseTimeMs": 34683,
+          "isFirst": true
+        }
+      ]
+    },
+    "buzzHistory": [
+      {
+        "id": "344c6e66-147f-48b8-a929-f94ce0f28a34",
+        "teamId": "71074218-3c3f-4377-81b4-4a8d237de9ae",
+        "teamName": "Red",
+        "teamColor": "#FF6B6B",
+        "timestamp": 1789636047748,
+        "roundNumber": 6,
+        "responseTimeMs": 34683,
+        "isFirst": true
+      }
+    ],
+    "hostSocketId": "CEsCmevh4iqcV1-vAAAA"
+  }
+}

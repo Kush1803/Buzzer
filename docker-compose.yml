@@ -1,0 +1,26 @@
+version: '3.9'
+
+services:
+  server:
+    build: ./server
+    container_name: buzzer-server
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - CLIENT_ORIGIN=http://localhost
+    volumes:
+      - buzzer-data:/app/data
+
+  client:
+    build: ./client
+    container_name: buzzer-client
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+
+volumes:
+  buzzer-data:
